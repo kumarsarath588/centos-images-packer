@@ -1,4 +1,4 @@
-name: CI
+name: Centos Image build
 
 on:
   push:
