@@ -30,12 +30,13 @@ jobs:
           PACKER_LOG: "yes"
         run: |
           cd templates
+          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-2009
           packer build centos-${HYPERVISOR}-${CENTOS_VERSION}-x86_64-${CENTOS_RELEASE}.json
           if [[ "${HYPERVISOR}" == "qemu" ]]; then
           qemu-img convert -p -c /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE} -O qcow2 /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.qcow2
           cp /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.qcow2 /opt/users/saratkumar.k/Packer/centos
-          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}
           elif [[ "${HYPERVISOR}" == "vmware-iso" ]]; then
           cp /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.ova /opt/users/saratkumar.k/Packer/centos
           fi
+          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}
           echo "Centos image of type ${HYPERVISOR} version ${CENTOS_VERSION} release ${CENTOS_RELEASE} available @ http://10.46.8.152/Users/saratkumar.k/Packer/centos/"
