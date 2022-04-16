@@ -39,8 +39,8 @@
     ]
   }],
   "variables": {
-    "centos_version": "{{env `CENTOS_VERSION`}}",
-    "centos_release": "{{env `CENTOS_RELEASE`}}",
+    "centos_version": "7.9",
+    "centos_release": "2009",
     "ssh_username": "centos",
     "ssh_password": "nutanix/4u",
     "output_dir": "OUTPUT_DIR",
