@@ -1,0 +1,90 @@
+{
+  "builders": [
+    {
+      "name": "CentOS-7-x86_64-{{user `centos_release`}}",
+      "vm_name": "CentOS-7-x86_64-{{user `centos_release`}}",
+      "vmdk_name": "CentOS-7-x86_64-{{user `centos_release`}}",
+      "type": "vmware-iso",
+      "communicator": "ssh",
+      "ssh_pty": "true",
+      "headless": false,
+      "disk_size": 51200,
+      "disk_type_id": "thin",
+      "guest_os_type": "rhel7-64",
+      "iso_url": "http://centos.excellmedia.net/7.9.2009/isos/x86_64/CentOS-7-x86_64-Minimal-2009.iso",
+      "iso_checksum": "07b94e6b1a0b0260b94c83d6bb76b26bf7a310dc78d7a9c7432809fb9bc6194a",
+      "shutdown_command": "sudo -S /usr/sbin/shutdown -h now",
+      "remote_host": "{{user `esxi_host_ip`}}",
+      "remote_username": "{{user `esxi_host_username`}}",
+      "remote_password": "{{user `esxi_host_password`}}",
+      "remote_datastore": "{{user `esxi_datastore`}}",
+      "remote_type": "esx5",
+      "ssh_username": "{{user `ssh_username`}}",
+      "ssh_password": "{{user `ssh_password`}}",
+      "ssh_wait_timeout": "60m",
+      "vnc_disable_password": true,
+      "vnc_port_min": 5987,
+      "vnc_port_max": 6000,
+      "boot_wait": "7s",
+      "ovftool_options": "--shaAlgorithm=SHA256",
+      "format": "ova",
+      "vmx_remove_ethernet_interfaces": true,
+      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}/CentOS-7-x86_64-{{user `centos_release`}}",
+      "vmx_data": {
+        "memsize": "2048",
+        "numvcpus": "2",
+        "ethernet0.networkName": "{{user `esxi_network`}}",
+        "ethernet0.present": "TRUE",
+        "ethernet0.startConnected": "TRUE",
+        "ethernet0.virtualDev": "e1000",
+        "ethernet0.addressType": "generated",
+        "ethernet0.generatedAddressOffset": "0",
+        "ethernet0.wakeOnPcktRcv": "FALSE"
+
+      },
+      "vmx_data_post": {
+        "ide1:0.startConnected": "FALSE",
+        "ide1:0.clientDevice": "TRUE",
+        "ide1:0.fileName": "emptyBackingString",
+        "ethernet0.virtualDev": "vmxnet3"
+      },
+      "boot_command": [
+        "<esc>",
+        "<wait>",
+        "linux inst.ks=http://10.46.8.152/Users/saratkumar.k/Packer/anaconda-ks.cfg biosdevname=0 net.ifnames=0",
+        "<enter>"
+      ]
+    }
+  ],
+  "provisioners": [{
+      "type": "file",
+      "source": "/opt/data/iso/{{user `vmware_tools_file`}}",
+      "destination": "/tmp/{{user `vmware_tools_file`}}"
+    },
+    {
+    "type": "shell",
+    "scripts": [
+      "scripts/centos-{{user `centos_version`}}/repo.sh",
+      "scripts/centos-7-vmware-tools_install.sh",
+      "scripts/common/sshd.sh",
+      "scripts/centos/locale.sh",
+      "scripts/centos-{{user `centos_version`}}/cleanup.sh",
+      "scripts/common/minimize.sh"
+    ]
+  }],
+    "variables": {
+    "centos_version": "7.9",
+    "centos_release": "2009",
+    "ssh_username": "centos",
+    "ssh_password": "nutanix/4u",
+    "ssh_timeout": "10m",
+    "esxi_host_ip": "{{env `ESXI_HOST`}}",
+    "esxi_host_username": "{{env `ESXI_USERNAME`}}",
+    "esxi_host_password": "{{env `ESXI_PASSWORD`}}",
+    "esxi_datastore": "{{env `ESXI_DATASTORE`}}",
+    "esxi_network": "VM Network",
+    "vmware_tools_file": "VMwareTools-10.3.22-15902021.tar.gz",
+    "output_dir": "OUTPUT_DIR",
+    "base_dir": "/opt/data/packer"
+  }
+}
