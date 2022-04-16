@@ -13,7 +13,6 @@
       "guest_os_type": "rhel7-64",
       "iso_url": "https://mirrors.edge.kernel.org/centos/7.8.2003/isos/x86_64/CentOS-7-x86_64-Minimal-2003.iso",
       "iso_checksum": "659691c28a0e672558b003d223f83938f254b39875ee7559d1a4a14c79173193",
-      "iso_checksum_type": "sha256",
       "shutdown_command": "sudo -S /usr/sbin/shutdown -h now",
       "remote_host": "{{user `esxi_host_ip`}}",
       "remote_username": "{{user `esxi_host_username`}}",
@@ -30,7 +29,7 @@
       "ovftool_options": "--shaAlgorithm=SHA256",
       "format": "ova",
       "vmx_remove_ethernet_interfaces": true,
-      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}",
+      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}/CentOS-7-x86_64-{{user `centos_release`}}",
       "vmx_data": {
         "memsize": "2048",
         "numvcpus": "2",
@@ -52,14 +51,14 @@
       "boot_command": [
         "<esc>",
         "<wait>",
-        "linux inst.ks=http://10.4.64.11:8080/Users/saratkumar/Packer/anaconda-ks.cfg biosdevname=0 net.ifnames=0",
+        "linux inst.ks=http://10.46.8.152/Users/saratkumar.k/Packer/anaconda-ks.cfg biosdevname=0 net.ifnames=0",
         "<enter>"
       ]
     }
   ],
   "provisioners": [{
       "type": "file",
-      "source": "/opt/iso/{{user `vmware_tools_file`}}",
+      "source": "/opt/data/iso/{{user `vmware_tools_file`}}",
       "destination": "/tmp/{{user `vmware_tools_file`}}"
     },
     {
@@ -85,8 +84,8 @@
     "esxi_host_password": "{{env `ESXI_PASSWORD`}}",
     "esxi_datastore": "{{env `ESXI_DATASTORE`}}",
     "esxi_network": "VM Network",
-    "vmware_tools_file": "VMwareTools-10.1.15-6677369.tar.gz",
+    "vmware_tools_file": "VMwareTools-10.3.22-15902021.tar.gz",
     "output_dir": "OUTPUT_DIR",
-    "base_dir": "/opt/packer"
+    "base_dir": "/opt/data/packer"
   }
 }

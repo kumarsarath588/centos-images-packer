@@ -41,10 +41,10 @@ jobs:
           cd templates
           packer build centos-${HYPERVISOR}-${RELEASE_VERSION}-x86_64.json
           if [[ ${HYPERVISOR} == "qemu"]]; then
-            qemu-img convert -p -c ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION} -O qcow2 ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2
-            cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2 ${FILER_PATH}
+            qemu-img convert -p -c ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION} -O qcow2 ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2
+            cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2 ${FILER_PATH}
           elsif [[ ${HYPERVISOR} == "vmware-iso"]]; then
-            cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}.ova ${FILER_PATH}
+            cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION}.ova ${FILER_PATH}
           fi
           chmod +r ${FILER_PATH}/*
           echo "Centos image of type ${HYPERVISOR} version ${CENTOS_VERSION} release ${RELEASE_VERSION} available @ http://10.46.8.152/Users/saratkumar.k/Packer/centos/"

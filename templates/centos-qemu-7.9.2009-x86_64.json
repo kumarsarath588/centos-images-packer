@@ -10,7 +10,7 @@
         [ "-m", "2048M" ],
         [ "-smp", "cpus=1,maxcpus=16,cores=4" ]
       ],
-      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}",
+      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}/CentOS-7-x86_64-{{user `full_release`}}",
       "shutdown_command": "sudo -S /usr/sbin/shutdown -h now",
       "disk_size": "51200",
       "format": "qcow2",
