@@ -51,4 +51,5 @@ jobs:
             cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION}.ova ${FILER_PATH}
           fi
           chmod +r ${FILER_PATH}/*
+          rm -rf ${OUTPUT_DIR}/CentOS*
           echo "Centos image of type ${HYPERVISOR} version ${CENTOS_VERSION} release ${RELEASE_VERSION} available @ http://10.46.8.152/Users/saratkumar.k/Packer/centos/"
