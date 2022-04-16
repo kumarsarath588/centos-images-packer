@@ -43,7 +43,7 @@ jobs:
           RELEASE_VERSION: ${{ matrix.release }}
         run: |
           cd templates
-          packer build centos-${HYPERVISOR}-${RELEASE_VERSION}-x86_64.json
+          packer build centos-${HYPERVISOR}-${RELEASE_VERSION}-x86_64.pkr.hcl
           if [[ "${HYPERVISOR}" == "qemu" ]]; then
             qemu-img convert -p -c ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION} -O qcow2 ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2
             cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2 ${FILER_PATH}
