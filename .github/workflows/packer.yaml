@@ -9,49 +9,42 @@ on:
   workflow_dispatch:
 
 jobs:
+  clean-up:
+    name: Cleanup artifact directory
+    runs-on: self-hosted
+    env:
+      OUTPUT_DIR: "/opt/data/packer/OUTPUT_DIR"
+    steps:
+      - name: Run cleanup
+        run: |
+          rm -rf ${OUTPUT_DIR}/CentOS*
   qemu:
-    name: Qcow2 Image build
+    name: Packer Image build
+    needs: clean-up
     runs-on: self-hosted
+    strategy:
+      fail-fast: false
+      matrix:
+        hypervisor: [qemu, vmware-iso]
+        release: [7.8.2003, 7.9.2009]
     env:
-      CENTOS_VERSION: "7.9"
-      CENTOS_RELEASE: "2009"
+      OUTPUT_DIR: "/opt/data/packer/OUTPUT_DIR"
+      FILER_PATH: "/opt/users/saratkumar.k/Packer/centos"
     steps:
       - name: checkout master
         uses: actions/checkout@master
       - name: Run Packer build
         env:
-          HYPERVISOR: qemu
-          PACKER_LOG: "yes"
+          HYPERVISOR: ${{ matrix.hypervisor }}
+          RELEASE_VERSION: ${{ matrix.release }}
         run: |
           cd templates
-          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE} /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.qcow2
-          packer build centos-${HYPERVISOR}-${CENTOS_VERSION}-x86_64-${CENTOS_RELEASE}.json
-          qemu-img convert -p -c /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE} -O qcow2 /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.qcow2
-          cp /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.qcow2 /opt/users/saratkumar.k/Packer/centos
-          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE} /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.qcow2
-          echo "Centos image of type ${HYPERVISOR} version ${CENTOS_VERSION} release ${CENTOS_RELEASE} available @ http://10.46.8.152/Users/saratkumar.k/Packer/centos/"
-  vmware-iso:
-    name: Ova Image build
-    needs: qemu
-    runs-on: self-hosted
-    env:
-      CENTOS_VERSION: "7.9"
-      CENTOS_RELEASE: "2009"
-    steps:
-      - name: checkout master
-        uses: actions/checkout@master
-      - name: Run Packer build
-        env:
-          HYPERVISOR: vmware-iso
-          ESXI_HOST: ${{ secrets.ESXI_HOST }}
-          ESXI_USERNAME: ${{ secrets.ESXI_USERNAME }}
-          ESXI_PASSWORD: ${{ secrets.ESXI_PASSWORD }}
-          ESXI_DATASTORE: ${{ secrets.ESXI_DATASTORE }}
-          PACKER_LOG: "yes"
-        run: |
-          cd templates
-          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.ova
-          packer build centos-${HYPERVISOR}-${CENTOS_VERSION}-x86_64-${CENTOS_RELEASE}.json
-          cp /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.ova /opt/users/saratkumar.k/Packer/centos
-          rm -rf /opt/data/packer/OUTPUT_DIR/CentOS-7-x86_64-${CENTOS_RELEASE}/CentOS-7-x86_64-${CENTOS_RELEASE}.ova
-          echo "Centos image of type ${HYPERVISOR} version ${CENTOS_VERSION} release ${CENTOS_RELEASE} available @ http://10.46.8.152/Users/saratkumar.k/Packer/centos/"
+          packer build centos-${HYPERVISOR}-${RELEASE_VERSION}-x86_64.json
+          if [[ ${HYPERVISOR} == "qemu"]]; then
+            qemu-img convert -p -c ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION} -O qcow2 ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2
+            cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}.qcow2 ${FILER_PATH}
+          elsif [[ ${HYPERVISOR} == "vmware-iso"]]; then
+            cp ${OUTPUT_DIR}/CentOS-7-x86_64-${RELEASE_VERSION}.ova ${FILER_PATH}
+          fi
+          chmod +r ${FILER_PATH}/*
+          echo "Centos image of type ${HYPERVISOR} version ${CENTOS_VERSION} release ${RELEASE_VERSION} available @ http://10.46.8.152/Users/saratkumar.k/Packer/centos/"

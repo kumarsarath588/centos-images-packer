@@ -1,9 +1,9 @@
 {
   "builders": [
     {
-      "name": "CentOS-7-x86_64-{{user `centos_release`}}",
-      "vm_name": "CentOS-7-x86_64-{{user `centos_release`}}",
-      "vmdk_name": "CentOS-7-x86_64-{{user `centos_release`}}",
+      "name": "CentOS-7-x86_64-{{user `full_release`}}",
+      "vm_name": "CentOS-7-x86_64-{{user `full_release`}}",
+      "vmdk_name": "CentOS-7-x86_64-{{user `full_release`}}",
       "type": "vmware-iso",
       "communicator": "ssh",
       "ssh_pty": "true",
@@ -29,7 +29,7 @@
       "ovftool_options": "--shaAlgorithm=SHA256",
       "format": "ova",
       "vmx_remove_ethernet_interfaces": true,
-      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}/CentOS-7-x86_64-{{user `centos_release`}}",
+      "output_directory": "{{user `base_dir`}}/{{user `output_dir`}}",
       "vmx_data": {
         "memsize": "2048",
         "numvcpus": "2",
@@ -75,6 +75,7 @@
     "variables": {
     "centos_version": "7.9",
     "centos_release": "2009",
+    "full_release": "{{env `RELEASE_VERSION`}}",
     "ssh_username": "centos",
     "ssh_password": "nutanix/4u",
     "ssh_timeout": "10m",
