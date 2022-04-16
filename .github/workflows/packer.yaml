@@ -18,7 +18,7 @@ jobs:
       - name: Run cleanup
         run: |
           rm -rf ${OUTPUT_DIR}/CentOS*
-  qemu:
+  build:
     name: Packer Image build
     needs: clean-up
     runs-on: self-hosted
@@ -30,6 +30,10 @@ jobs:
     env:
       OUTPUT_DIR: "/opt/data/packer/OUTPUT_DIR"
       FILER_PATH: "/opt/users/saratkumar.k/Packer/centos"
+      ESXI_HOST: ${{ secrets.ESXI_HOST }}
+      ESXI_USERNAME: ${{ secrets.ESXI_USERNAME }}
+      ESXI_PASSWORD: ${{ secrets.ESXI_PASSWORD }}
+      ESXI_DATASTORE: ${{ secrets.ESXI_DATASTORE }}
     steps:
       - name: checkout master
         uses: actions/checkout@master
