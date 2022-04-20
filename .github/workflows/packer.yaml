@@ -26,7 +26,7 @@ jobs:
       fail-fast: false
       matrix:
         hypervisor: [qemu, vmware-iso]
-        release: [7.9.2009]
+        release: [7.9.2009, 8.5.2111]
     env:
       OUTPUT_DIR: "/opt/data/packer/OUTPUT_DIR"
       FILER_PATH: "/opt/users/saratkumar.k/Packer/centos"
